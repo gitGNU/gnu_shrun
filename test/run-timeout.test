@@ -1,0 +1,5 @@
+$ shrun
+< $ timeout 1
+< $ sleep 2
+> [1] $ timeout 1 -- ok
+> [2] $ sleep 2 -- command timed out

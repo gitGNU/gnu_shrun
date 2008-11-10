@@ -1,0 +1,1279 @@
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo
+
+$ read foo && echo $foo
+< foo
+< bar
+> foo

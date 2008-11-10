@@ -1,0 +1,11 @@
+$ shrun
+< $ timeout 1
+< $ kill -STOP $$
+> [1] $ timeout 1 -- ok
+> [2] $ kill -STOP $$ -- command timed out
+
+$ shrun
+< $ timeout 1
+< $ sleep 2
+> [1] $ timeout 1 -- ok
+> [2] $ sleep 2 -- command timed out

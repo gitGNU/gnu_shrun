@@ -1,0 +1,103 @@
+shrun 0.8
+=========
+
+Copyright (C) 2008 Andreas Gruenbacher <agruen@suse.de>, SUSE Labs
+
+Shrun is a testcase execution tool that takes shell commands, their input and
+expected output as test cases. For example, the shrun variant of hello world
+looks like this:
+
+	$ echo hello world
+	> hello world
+
+The first line defines the command to execute, and the second line defines the
+expected output. Here is another form of hello world involving standard input
+and output:
+
+	$ cat
+	< hello world
+	> hello world
+
+Multi-line commands can be defined like this:
+
+	$ hello()
+	+ {
+	+   echo hello world
+	+ }
+
+	$ hello
+	> hello world
+
+The commands are all executed in the same shell (/bin/sh) as if they were typed
+in directly. All the usual shell syntax rules apply. Differences between the
+expected and actual output, as in the following command with the expected and
+actual output alongside each other, indicating which lines differ. For example,
+this command:
+
+	$ echo -e 'foo\nbar\nbaz'
+	> foo
+	> baz
+
+leads to this output:
+
+	foo | foo
+	bar ? baz
+	baz ? ~
+
+
+Execution
+=========
+
+Simply start shrun and type in a test script interactively, or invoke shrun
+with the name of a script file. For example, this README file can be used as a
+test script itself, and ``./shrun README'' will lead to the following result:
+
+	[8] $ echo hello world -- ok
+	[15] $ cat -- ok
+	[21] $ hello() ... -- ok
+	[26] $ hello -- ok
+	[35] $ echo -e 'foo\nbar\nbaz' -- failed
+	foo | foo
+	bar ? baz
+	baz ? ~
+	[83] $ timeout 10 -- ok
+	[84] $ echo faster than that -- ok
+	7 commands (6 passed, 1 failed)
+
+The line numbers of the commands appear in brackets, followed by the first line
+of the command, followed by the outcome. At the end, a summary is printed. When writing to a terminal, the output will be colorized.
+
+
+Exit Status
+===========
+
+Run exits with status 0 is all the test commands succeeded, and with exit
+status 1 otherwise.
+
+
+Timeouts
+========
+
+In order to prevent test scripts from hanging, commands time out after five
+seconds by default. The length of the timeout can be configured with a special
+built-in command:
+
+	$ timeout 10
+	$ echo faster than that
+	> faster than that
+
+The timeout can be set to 0 to indicate no timeout.
+
+
+Internals
+=========
+
+To syncronize the command stream with the output, each command is internally
+terminated by ``echo ^D''. This mechanism normally remains hidden, but syntax
+errors in the script code or unterminated commands may lead to a loss of this
+synchronization. This may cause test cases to fail in unexpected ways.
+
+Standard input to commands is implemented by issuing the appropriate file
+descriptor redirection commands. (The actual input is read from a named pipe).
+Control commands like the timeout command described above use another named
+pipe for communication from the shell back to the shrun utility.

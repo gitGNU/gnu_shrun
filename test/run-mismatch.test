@@ -1,0 +1,16 @@
+$ shrun
+< $ echo foo
+< > foo
+< $ echo bar
+< > bar
+< $ echo -e 'foo\nbar\nbaz'
+< > foo
+< > baR
+< > baz
+> [1] $ echo foo -- ok
+> [3] $ echo bar -- ok
+> [5] $ echo -e 'foo\nbar\nbaz' -- failed
+> foo | foo
+> bar ? baR
+> baz | baz
+> 3 commands (2 passed, 1 failed)

@@ -1,0 +1,13 @@
+$ foo() {
++   echo foo
++   echo foo
++ }
+
+$ (foo; foo | sed -e 's,^,2> ,' >&2)
+> foo
+> foo
+> 2> foo
+> 2> foo
+
+$ echo baz
+> baz

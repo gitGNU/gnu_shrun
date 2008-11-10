@@ -1,0 +1,5 @@
+$ set +o posix
+$ shrun <(echo -e '$ /bin/sh\n> foo')
+< echo foo
+> [1] $ /bin/sh -- ok
+> 1 commands (1 passed, 0 failed)

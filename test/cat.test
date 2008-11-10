@@ -1,0 +1,7 @@
+$ cat
+< foo
+> foo
+
+$ cat
+< bar
+> bar

@@ -1,0 +1,385 @@
+$ timeout 0
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)
+
+$ shrun
+< $ echo foo
+< > foo
+> [1] $ echo foo -- ok
+> 1 commands (1 passed, 0 failed)

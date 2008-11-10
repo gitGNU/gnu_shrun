@@ -1,0 +1,4 @@
+$ shrun
+< $ kill $$
+> [1] $ kill $$ -- short result
+> 1 commands (0 passed, 1 failed)

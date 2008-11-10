@@ -1,0 +1,5 @@
+* Man page
+* Then the child dies, continue reading from the shell to make sure we
+  get all error messages and the like. This will also ensure that we
+  properly report exec failures.
+* Look into the broken test cases (test/broken*.test)
