@@ -51,6 +51,8 @@ const char *ansi_green = "\033[32m";
 const char *ansi_clear = "\033[m";
 
 const char *end_marker_cmd = "echo $'\\4'\n";
+const char *restore_stdin_cmd = "exec <&111-\n";
+const char *control_cmds = "timeout() { echo \"timeout $1\" >&109; }\n";
 
 const char *progname;
 char *tempdir_name, *stdin_fifo_name;
@@ -89,10 +91,11 @@ static int append_line(struct queue *queue, const char *line, size_t sz)
 size_t first_lineno = 1;
 
 static int read_testcase(struct queue *script, int eof, struct queue *testcase,
-			 struct queue *expected, struct queue *input)
+			 struct queue *expected, struct queue *input,
+			 int preamble)
 {
 	static size_t lineno = 1;
-	char *buf, *newline;
+	char *buf;
 	ssize_t sz;
 
 	for (;;) {
@@ -110,10 +113,12 @@ static int read_testcase(struct queue *script, int eof, struct queue *testcase,
 		l = buf; end = buf + sz;
 		while (l < end && (*l == ' ' || *l == '\t'))
 			l++;
-		if (l < end && (*l == '$' || !queue_empty(testcase))) {
+		if (l < end && (*l == '$' ||
+				queue_length(testcase) > preamble)) {
 			switch(*l) {
 			case '$': case '+':
-				if (*l == '$' && !queue_empty(testcase)) {
+				if (*l == '$' &&
+				    queue_length(testcase) > preamble) {
 					eof = 1;
 					goto done;
 				}
@@ -143,65 +148,46 @@ static int read_testcase(struct queue *script, int eof, struct queue *testcase,
 	}
 
 done:
-	if (!eof)
-		return 0;
-	sz = strlen(end_marker_cmd);
-	buf = queue_write_pos(testcase, sz, NULL);
-	if (!buf)
-		return -1;
-	memcpy(buf, end_marker_cmd, sz);
-	queue_advance_write(testcase, sz);
-
-	buf = queue_read_pos(testcase, &sz);
-	newline = strchr(buf, '\n');
-
-	printf("[%u] $ %.*s%s -- ", first_lineno, newline - buf, buf,
-	       (newline + strlen(end_marker_cmd) + 1 == buf + sz) ?
-		   "" : " ...");
-	fflush(stdout);
 	return eof;
 }
 
 static int create_stdin_fifo(void) {
-	const char *tmpdir;
-	size_t len;
+	if (!stdin_fifo_name) {
+		const char *tmpdir;
+		size_t len;
 
-	if (stdin_fifo_name)
-		return 0;
-
-	tmpdir = getenv("TMPDIR");
-	if (!tmpdir)
-		tmpdir = "/tmp";
-	len = strlen(tmpdir) + 1 + strlen(progname) + 8;
-	tempdir_name = malloc(len);
-	stdin_fifo_name = malloc(len + 6);
-	if (!tempdir_name || !stdin_fifo_name) {
-		perror(progname);
-		return -1;
+		tmpdir = getenv("TMPDIR");
+		if (!tmpdir)
+			tmpdir = "/tmp";
+		len = strlen(tmpdir) + 1 + strlen(progname) + 8;
+		tempdir_name = malloc(len);
+		stdin_fifo_name = malloc(len + 6);
+		if (!tempdir_name || !stdin_fifo_name) {
+			perror(progname);
+			return -1;
+		}
+		sprintf(tempdir_name, "%s/%s.XXXXXX", tmpdir, progname);
+		if (!mkdtemp(tempdir_name)) {
+			fprintf(stderr, "%s: %s: %s\n",
+				progname, tempdir_name, strerror(errno));
+			return -1;
+		}
+		sprintf(stdin_fifo_name, "%s/stdin", tempdir_name);
+	} else {
+		/*
+		 * It is not guaranteed that the read side of the pipe
+		 * has been closed already (e.g., a timeout may have
+		 * occurred, or the process may have forked). If still
+		 * open, we would reopen the pipe to that old process,
+		 * and lose synchronization with the new process in
+		 * redirect_stdin(). To avoid this, unlink and recreate
+		 * the pipe here.
+		 */
+		unlink(stdin_fifo_name);
 	}
-	sprintf(tempdir_name, "%s/%s.XXXXXX", tmpdir, progname);
-	if (!mkdtemp(tempdir_name)) {
-		fprintf(stderr, "%s: %s: %s\n",
-			progname, tempdir_name, strerror(errno));
-		return -1;
-	}
-	sprintf(stdin_fifo_name, "%s/stdin", tempdir_name);
 	if (mkfifo(stdin_fifo_name, 0700) != 0) {
 		fprintf(stderr, "%s: %s: %s\n",
 			progname, stdin_fifo_name, strerror(errno));
-		return -1;
-	}
-	return 0;
-}
-
-static int define_control_commands(int fd)
-{
-	const char *cmds = "timeout() { echo \"timeout $1\" >&109; }\n";
-	ssize_t sz = strlen(cmds), ret;
-
-	ret = write(fd, cmds, sz);
-	if (ret != sz) {
-		perror(progname);
 		return -1;
 	}
 	return 0;
@@ -214,6 +200,8 @@ static int redirect_stdin(int out)
 	size_t sz;
 	int ret = 0;
 
+	if (create_stdin_fifo() != 0)
+		return -1;
 	redirect_stdin = malloc(strlen(redirect_stdin_fmt) +
 				strlen(stdin_fifo_name));
 	if (!redirect_stdin)
@@ -228,21 +216,26 @@ static int redirect_stdin(int out)
 	return ret;
 }
 
-static int restore_stdin(int out, int in)
+static void report_begin(struct queue *testcase, size_t preamble)
 {
-	static const char *restore_stdin = "exec <&111-\necho\n";
-	size_t sz = strlen(restore_stdin);
-	char buf;
+	char *buf, *newline;
+	ssize_t sz;
 
-	if (write(out, restore_stdin, sz) != sz)
-		return -1;
-	if (read(in, &buf, 1) != 1)
-		return -1;
-	return 0;
+	buf = queue_read_pos(testcase, &sz);
+	buf += preamble;
+	sz -= preamble;
+	newline = memchr(buf, '\n', sz);
+	if (!newline)
+		newline = buf + sz -1;
+
+	printf("[%u] $ %.*s%s -- ",
+	       first_lineno, newline - buf, buf,
+	       (newline == buf + sz - 1) ? "" : "...");
+	fflush(stdout);
 }
 
-static int report_result(struct queue *fifo1, struct queue *fifo2,
-			 int testcase_eof)
+static int report_end(struct queue *fifo1, struct queue *fifo2,
+		      int testcase_eof)
 {
 	static int width = 0;
 	char *buf1, *buf2, *l1, *l2;
@@ -377,12 +370,8 @@ static int interactive(int in, int out)
 			if (sz == 0) {
 				stdin_eof = 1;
 
-				sz = strlen(end_marker_cmd);
-				buf = queue_write_pos(&input, sz, NULL);
-				if (!buf)
+				if (queue_append(&input, end_marker_cmd) != 0)
 					return -1;
-				memcpy(buf, end_marker_cmd, sz);
-				queue_advance_write(&input, sz);
 			}
 		}
 		if (FD_ISSET(out, &wfds)) {
@@ -413,7 +402,7 @@ static int interactive(int in, int out)
 			if (buf && sz >= 2 && buf[sz - 2] == '\4' &&
 			    buf[sz - 1] == '\n') {
 				interactive_eof = 1;
-				queue_erase(&output, 2);
+				queue_erase_tail(&output, 2);
 			}
 			for(;;) {
 
@@ -441,8 +430,8 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 {
 	struct queue script, control, testcase, expected, input, output;
 	int script_eof = 0, in_eof = 0, testcase_eof = 0;
-	int reading_testcase = 1, stdin_redirected = 0, retval = 0;
-	size_t passed = 0, failed = 0, timed_out = 0;
+	int reading_testcase = 1, retval = 0;
+	size_t passed = 0, failed = 0, timed_out = 0, preamble = 0;
 	int stdin_fd = -1;
 	sigset_t sigset;
 
@@ -458,11 +447,6 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 	signal(SIGCHLD, SIG_IGN /*catch_child_died*/);
 	signal(SIGPIPE, SIG_IGN);
 
-	if (create_stdin_fifo() != 0)
-		return -1;
-	if (define_control_commands(out) != 0)
-		return -1;
-
 	queue_init(&script);
 	queue_init(&control);
 	queue_init(&testcase);
@@ -470,47 +454,53 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 	queue_init(&input);
 	queue_init(&output);
 
+	if (queue_append(&testcase, control_cmds) != 0)
+		return -1;
+	preamble = queue_length(&testcase);
+
 	for(;;) {
 		fd_set rfds, wfds;
 		int maxfd = 0, retval2;
 		struct timespec timeout, *ptimeout = NULL;
 
 		if (!reading_testcase && (testcase_eof || in_eof)) {
-			if (report_result(&output, &expected,
-					  testcase_eof) == 0)
+			if (report_end(&output, &expected, testcase_eof) == 0)
 				passed++;
 			else
 				failed++;
 			queue_reset(&expected);
 			queue_reset(&input);
 			queue_reset(&output);
-			reading_testcase = 1;
-			if (stdin_redirected) {
-				if (stdin_fd != -1) {
-					close(stdin_fd);
-					stdin_fd = -1;
-				}
-				if (restore_stdin(out, in) != 0)
-					break;
-				stdin_redirected = 0;
+			if (stdin_fd != -1) {
+				close(stdin_fd);
+				stdin_fd = -1;
 			}
+			reading_testcase = 1;
+			preamble = 0;
 		}
 		if (reading_testcase) {
 			if (script_eof && queue_empty(&script) &&
-			    queue_empty(&testcase))
+			    queue_length(&testcase) == preamble)
 				goto out;
 
 			retval2 = read_testcase(&script, script_eof, &testcase,
-						&expected, &input);
+						&expected, &input, preamble);
 			if (retval2 < 0)
 				break;
 			if (retval2 > 0) {
+				report_begin(&testcase, preamble);
+
 				if (!queue_empty(&input)) {
 					stdin_fd = redirect_stdin(out);
 					if (stdin_fd == -1)
 						break;
-					stdin_redirected = 1;
+					if (queue_append(&testcase,
+							restore_stdin_cmd) != 0)
+						break;
 				}
+				if (queue_append(&testcase,
+						 end_marker_cmd) != 0)
+					return -1;
 				reading_testcase = 0;
 				testcase_eof = 0;
 			}
@@ -628,7 +618,7 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 				if (buf && sz >= 2 && buf[sz - 2] == '\4'
 				    && buf[sz - 1] == '\n') {
 					testcase_eof = 1;
-					queue_erase(&output, 2);
+					queue_erase_tail(&output, 2);
 				}
 			}
 		}

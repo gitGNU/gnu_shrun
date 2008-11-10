@@ -1,7 +1,7 @@
-VERSION := 0.8
+VERSION := 0.9
 CFLAGS := -g -Wall
-TESTS := $(wildcard test/*.test)
 BROKEN_TESTS := $(wildcard test/broken*.test)
+TESTS := $(filter-out $(BROKEN_TESTS),$(wildcard test/*.test))
 
 all: shrun
 
@@ -14,11 +14,11 @@ shrun: shrun.o queue.o
 	@touch $@
 
 .PHONY: check
-check: $(patsubst %.test,%.ok,$(filter-out $(BROKEN_TESTS),$(TESTS)))
+check: $(TESTS:.test=.ok)
 
 dist:
 	ln -s . shrun-$(VERSION)
-	tar cvzf shrun-$(VERSION).tar.gz shrun-$(VERSION)/{Makefile,queue.[ch],shrun.c,README,TODO,COPYING} $(TESTS:%=shrun-$(VERSION)/%)
+	tar czf shrun-$(VERSION).tar.gz $(patsubst %,shrun-$(VERSION)/%,Makefile queue.[ch] shrun.c README TODO COPYING $(TESTS) $(BROKEN_TESTS))
 	rm shrun-$(VERSION)
 
 clean:

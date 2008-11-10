@@ -82,6 +82,11 @@ int queue_empty(struct queue *queue)
 	return queue->write == queue->read;
 }
 
+size_t queue_length(struct queue *queue)
+{
+	return queue->write - queue->read;
+}
+
 char *queue_read_pos(struct queue *queue, ssize_t *pavail)
 {
 	size_t avail = queue->write - queue->read;
@@ -101,7 +106,20 @@ void queue_reset(struct queue *queue)
 	queue->write = queue->read = queue->buffer;
 }
 
-void queue_erase(struct queue *queue, size_t sz)
+void queue_erase_tail(struct queue *queue, size_t sz)
 {
 	queue->write -= sz;
+}
+
+int queue_append(struct queue *queue, const char *str)
+{
+	ssize_t sz = strlen(str);
+	char *buf;
+
+	buf = queue_write_pos(queue, sz, NULL);
+	if (!buf)
+		return -1;
+	memcpy(buf, str, sz);
+	queue_advance_write(queue, sz);
+	return 0;
 }
