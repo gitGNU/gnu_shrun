@@ -18,7 +18,7 @@ check: $(TESTS:.test=.ok)
 
 dist:
 	ln -s . shrun-$(VERSION)
-	tar czf shrun-$(VERSION).tar.gz $(patsubst %,shrun-$(VERSION)/%,Makefile queue.[ch] shrun.c README TODO COPYING $(TESTS) $(BROKEN_TESTS))
+	tar czf shrun-$(VERSION).tar.gz $(patsubst %,shrun-$(VERSION)/%,Makefile queue.[ch] shrun.c shrun.1 TODO COPYING $(TESTS) $(BROKEN_TESTS))
 	rm shrun-$(VERSION)
 
 clean:

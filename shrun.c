@@ -692,7 +692,7 @@ out:
 void usage(int status)
 {
 	fprintf(status ? stderr : stdout,
-		"usage: %s [--timeout n] [--stop-at n] "
+		"usage: %s [--timeout n] [--stop-at n] [--shell path]"
 		"[--color={never|always|auto}] [--no-stderr]\n",
 		progname);
 	exit(status);
@@ -701,9 +701,9 @@ void usage(int status)
 struct option long_options[] = {
 	{"timeout", 1, NULL, 't'},
 	{"stop-at", 1, NULL, 1},
-	{"color", 1, NULL, 2},
-	{"no-stderr", 0, NULL, 3},
-	{"shell", 1, NULL, 4},
+	{"shell", 1, NULL, 2},
+	{"color", 1, NULL, 3},
+	{"no-stderr", 0, NULL, 4},
 	{"help", 0, NULL, 'h'},
 	{NULL, 0, NULL, 0}
 };
@@ -726,7 +726,11 @@ int main(int argc, char *argv[])
 			opt_stop_at = atoi(optarg);
 			break;
 
-		case 2:  /* --color */
+		case 2:  /*  --shell */
+			opt_shell = optarg;
+			break;
+
+		case 3:  /* --color */
 			if (strcmp(optarg, "never") == 0)
 				opt_color = 0;
 			else if (strcmp(optarg, "always") == 0)
@@ -737,12 +741,8 @@ int main(int argc, char *argv[])
 				usage(1);
 			break;
 
-		case 3:  /* --no-stderr */
+		case 4:  /* --no-stderr */
 			opt_stderr = 0;
-			break;
-
-		case 4:  /*  -shell */
-			opt_shell = optarg;
 			break;
 
 		case 'h':
@@ -800,6 +800,10 @@ int main(int argc, char *argv[])
 
 		dup2(pipe0[PIPE_READ], 110);
 		close(pipe0[PIPE_READ]);
+		if (script_fd == STDIN_FILENO) {
+			close(STDIN_FILENO);
+			open("/dev/null", O_RDONLY);
+		}
 		dup2(pipe1[PIPE_WRITE], STDOUT_FILENO);
 		if (opt_stderr)
 			dup2(pipe1[PIPE_WRITE], STDERR_FILENO);

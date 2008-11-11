@@ -3,7 +3,7 @@
 
   Copyright (C) 2008 Andreas Gruenbacher <agruen@suse.de>, SUSE Labs
 
-  License: GPLv2 or later
+  License: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>.
 */
 
 #ifndef __FIFO_H
