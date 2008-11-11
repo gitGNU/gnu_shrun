@@ -238,8 +238,8 @@ static int report_end(struct queue *fifo1, struct queue *fifo2,
 		      int testcase_eof)
 {
 	static int width = 0;
-	char *buf1, *buf2, *l1, *l2;
-	ssize_t sz1, sz2;
+	char *buf1, *buf2, *l1, *l2, *eol1, *eol2;
+	ssize_t sz1, sz2, lz1, lz2;
 
 	buf1 = queue_read_pos(fifo1, &sz1);
 	buf2 = queue_read_pos(fifo2, &sz2);
@@ -258,10 +258,37 @@ static int report_end(struct queue *fifo1, struct queue *fifo2,
 	printf("%s%s%s\n", ansi_red, "failed", ansi_clear);
 
 	l1 = buf1;
+	eol1 = l1 + sz1;
+	lz1 = 0;
+	for (;;) {
+		if (l1 == eol1 || *l1 == '\n') {
+			if (lz1 > width)
+				width = lz1;
+			if (l1 == eol1)
+				break;
+			lz1 = -1;
+		}
+		l1++;
+		lz1++;
+	}
+	l2 = buf2;
+	eol2 = l2 + sz2;
+	lz2 = 0;
+	for (;;) {
+		if (l2 == eol2 || *l2 == '\n') {
+			if (lz2 > width)
+				width = lz2;
+			if (l2 == eol2)
+				break;
+			lz2 = -1;
+		}
+		l2++;
+		lz2++;
+	}
+
+	l1 = buf1;
 	l2 = buf2;
 	while (sz1 || sz2) {
-		char *eol1, *eol2;
-		size_t lz1, lz2;
 		int eq;
 
 		eol1 = memchr(l1, '\n', sz1);
@@ -290,10 +317,10 @@ static int report_end(struct queue *fifo1, struct queue *fifo2,
 			lz2 = 1;
 		}
 
-		printf("%*s%.*s %s%c%s %.*s\n",
-		       lz1 < width ? width - lz1 : 0, "", lz1, l1,
-		       eq ? ansi_green : ansi_red,
-		       eq ? '|' : '?', ansi_clear, lz2, l2);
+		printf("%-*.*s %s%c%s %.*s\n",
+		       width, lz1, l1,
+		       eq ? ansi_green : ansi_red, eq ? '|' : '?', ansi_clear,
+		       lz2, l2);
 
 		sz1 -= eol1 - l1; l1 = eol1;
 		sz2 -= eol2 - l2; l2 = eol2;

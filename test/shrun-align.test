@@ -1,0 +1,30 @@
+$ shrun
+< $ cat
+< <
+< < a
+< < ab
+< < abc
+< >
+< > a
+< > ab
+< > abC
+< $ cat
+< < abc
+< < ab
+< < a
+< <
+< > abC
+< > ab
+< > a
+< >
+> [1] $ cat -- failed
+>     | 
+> a   | a
+> ab  | ab
+> abc ? abC
+> [10] $ cat -- failed
+> abc ? abC
+> ab  | ab
+> a   | a
+>     | 
+> 2 commands (0 passed, 2 failed)

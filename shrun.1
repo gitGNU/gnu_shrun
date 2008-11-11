@@ -19,17 +19,18 @@ shrun \- Shell Run
 .RI [ options "] [" script ]
 
 .SH DESCRIPTION
-Takes a script that defines a number of shell commands, their input, and
-their expected output, runs those tests, and compares the result. When
-the expected and actual output of a command differs, the line-wise
-differences are shown in a side-by-side view. Reports which tests
-succedded and failed, followed by a summary.
+Takes a script that defines a number of shell commands, their input, and their
+expected output, runs those tests, and compares the actual and expected output.
+If there are differences, the line-wise differences are shown in a side-by-side
+view.  Reports which tests succeeded and failed, followed by a summary.
 
 When invoked with a
 .I script
 argument, the specified script is run. Otherwise, the script is read
-from standard input (and the script itself cannot read from standard
-input).  Exits with a status of
+from standard input. (The script itself then cannot read from standard
+input.)
+
+Exits with a status of
 .B 0
 if all test commands succeeded, and
 .B 1
@@ -38,15 +39,15 @@ otherwise.
 .SH OPTIONS
 
 .IP "--timeout=\fIn\fR" 5
-Change the command timeout to \fIn\fR seconds. If \fIn\fR is 0, timeouts
-are turned off.
+Change the command timeout to \fIn\fR seconds. If \fIn\fR is 0, the timeout
+is disabled.
 .IP "--stop-at=\fIn\fR" 5
 Execute the script until reaching line \fIn\fR, then drop into interactive
 mode. In interactive mode, additional shell commands may be entered. The
-script continues after pressing ^D.
+script resumes after ^D (end of file).
 .IP "--shell=\fIpath\fR" 5
-Instead of /bin/sh, use the specified shell. (Note that resuts may vary,
-as many shells will not understand all the internal commands used.)
+Instead of /bin/sh, use the specified shell. Note that results may vary
+as many shells will not understand all the internal commands used.
 .IP "--color={never|always|auto}" 5
 Colorize the output never at all, always, or only when writing to a
 terminal (auto).
@@ -69,7 +70,7 @@ adds a line of input, and
 .B >
 adds a line of (expected) output.
 Leading whitespace before the command character is ignored, and a single
-optional space chracter after the command character is ignored as well.
+optional space character after the command character is ignored as well.
 
 All commands are executed in a single shell (by default,
 .IR /bin/sh ).
@@ -159,7 +160,7 @@ commands is printed.
 
 .SH IMPLEMENTATION DETAILS WORTH KNOWING ABOUT
 
-To syncronize the command stream with the output, each command is
+To synchronize the command stream with the output, each command is
 internally terminated by 'echo ^D'. This mechanism usually remains
 hidden, but unterminated commands may lead to a loss of this
 synchronization, which may cause test cases to fail in unexpected ways.
