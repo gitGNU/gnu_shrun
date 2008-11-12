@@ -237,7 +237,7 @@ static void report_begin(struct queue *testcase, size_t preamble)
 static int report_end(struct queue *fifo1, struct queue *fifo2,
 		      int testcase_eof)
 {
-	static int width = 0;
+	int width = 0;
 	char *buf1, *buf2, *l1, *l2, *eol1, *eol2;
 	ssize_t sz1, sz2, lz1, lz2;
 
