@@ -317,10 +317,10 @@ static int report_end(struct queue *fifo1, struct queue *fifo2,
 			lz2 = 1;
 		}
 
-		printf("%-*.*s %s%c%s %.*s\n",
-		       width, lz1, l1,
-		       eq ? ansi_green : ansi_red, eq ? '|' : '?', ansi_clear,
-		       lz2, l2);
+		printf("%s%-*.*s%s %c %s%.*s%s\n",
+		       eq ? "" : ansi_red, width, lz1, l1, ansi_clear,
+		       eq ? '|' : '?',
+		       eq ? "" : ansi_green, lz2, l2, ansi_clear);
 
 		sz1 -= eol1 - l1; l1 = eol1;
 		sz2 -= eol2 - l2; l2 = eol2;
