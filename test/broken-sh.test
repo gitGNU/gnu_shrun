@@ -1,0 +1,12 @@
+$ echo foo
+> foo
+
+$ sh
+
+	$ echo bar
+	> bar
+
+	$ exit
+
+$ echo baz
+> baz

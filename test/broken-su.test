@@ -1,0 +1,13 @@
+$ whoami
+> root
+
+$ export L=$(sed -ne '$s/:.*//p' /etc/passwd)
+$ su $L
+
+	$ [ $(whoami) = $L ]
+	+   || echo wrong user
+
+	$ exit
+
+$ whoami
+> root
