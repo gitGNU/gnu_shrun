@@ -720,7 +720,7 @@ void usage(int status)
 {
 	fprintf(status ? stderr : stdout,
 		"usage: %s [--timeout n] [--stop-at n] [--shell path]"
-		"[--color={never|always|auto}] [--no-stderr]\n",
+		"[--color[={never|always|auto}]] [--no-stderr]\n",
 		progname);
 	exit(status);
 }
@@ -729,7 +729,7 @@ struct option long_options[] = {
 	{"timeout", 1, NULL, 't'},
 	{"stop-at", 1, NULL, 1},
 	{"shell", 1, NULL, 2},
-	{"color", 1, NULL, 3},
+	{"color", 2, NULL, 3},
 	{"no-stderr", 0, NULL, 4},
 	{"help", 0, NULL, 'h'},
 	{NULL, 0, NULL, 0}
@@ -758,10 +758,10 @@ int main(int argc, char *argv[])
 			break;
 
 		case 3:  /* --color */
-			if (strcmp(optarg, "never") == 0)
-				opt_color = 0;
-			else if (strcmp(optarg, "always") == 0)
+			if (optarg == NULL || strcmp(optarg, "always") == 0)
 				opt_color = 1;
+			else if (strcmp(optarg, "never") == 0)
+				opt_color = 0;
 			else if (strcmp(optarg, "auto") == 0)
 				opt_color = -1;
 			else

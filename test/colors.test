@@ -1,0 +1,44 @@
+$ shrun --color
+< $ echo -e 'foo\nbar\nbaz'
+< > foo
+< > baR
+< > baz
+> [1] $ echo -e 'foo\nbar\nbaz' -- [31m[1mfailed[m
+> foo[m | foo[m
+> [31m[1mbar[m ? [32mbaR[m
+> baz[m | baz[m
+> [31m[1m1 commands (0 passed, 1 failed)[m
+
+$ shrun --color
+< $ cat
+< <
+< < a
+< < ab
+< < abc
+< >
+< > a
+< > ab
+< > abC
+> [1] $ cat -- [31m[1mfailed[m
+>    [m | [m
+> a  [m | a[m
+> ab [m | ab[m
+> [31m[1mabc[m ? [32mabC[m
+> [31m[1m1 commands (0 passed, 1 failed)[m
+
+$ shrun --color
+< $ cat
+< < abc
+< < ab
+< < a
+< <
+< > abC
+< > ab
+< > a
+< >
+> [1] $ cat -- [31m[1mfailed[m
+> [31m[1mabc[m ? [32mabC[m
+> ab [m | ab[m
+> a  [m | a[m
+>    [m | [m
+> [31m[1m1 commands (0 passed, 1 failed)[m
