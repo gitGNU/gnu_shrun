@@ -835,11 +835,11 @@ int main(int argc, char *argv[])
 			open("/dev/null", O_RDONLY);
 		}
 		dup2(pipe1[PIPE_WRITE], STDOUT_FILENO);
-		if (opt_stderr)
-			dup2(pipe1[PIPE_WRITE], STDERR_FILENO);
 		close(pipe1[PIPE_WRITE]);
 		dup2(control[PIPE_WRITE], 109);
 		close(control[PIPE_WRITE]);
+		if (opt_stderr)
+			dup2(STDOUT_FILENO, STDERR_FILENO);
 
 		execl(opt_shell, opt_shell, "/dev/fd/110", NULL);
 		fprintf(stderr, "%s%s: %s: %s%s\n",

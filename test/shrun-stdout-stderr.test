@@ -1,0 +1,22 @@
+$ shrun
+< $ echo stdout
+< > stdout
+< $ echo stderr >&2
+< > stderr
+> [1] $ echo stdout -- ok
+> [3] $ echo stderr >&2 -- ok
+> 2 commands (2 passed, 0 failed)
+
+$ shrun --no-stderr 2> /dev/null
+< $ echo stdout
+< > stdout
+< $ echo stderr >&2
+> [1] $ echo stdout -- ok
+> [3] $ echo stderr >&2 -- ok
+> 2 commands (2 passed, 0 failed)
+
+$ shrun --no-stderr > /dev/null
+< $ echo stdout
+< > stdout
+< $ echo stderr >&2
+> stderr
