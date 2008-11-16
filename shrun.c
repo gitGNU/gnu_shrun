@@ -689,11 +689,14 @@ out:
 	queue_destroy(&input);
 	queue_destroy(&output);
 
-	if (stdin_fifo_name)
+	if (stdin_fifo_name) {
 		unlink(stdin_fifo_name);
-	free(stdin_fifo_name);
-	rmdir(tempdir_name);
-	free(tempdir_name);
+		free(stdin_fifo_name);
+	}
+	if (tempdir_name) {
+		rmdir(tempdir_name);
+		free(tempdir_name);
+	}
 
 	failed++;
 	if (timed_out)
