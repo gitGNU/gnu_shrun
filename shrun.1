@@ -27,8 +27,7 @@ view.  Reports which tests succeeded and failed, followed by a summary.
 When invoked with a
 .I script
 argument, the specified script is run. Otherwise, the script is read
-from standard input. (The script itself then cannot read from standard
-input.)
+from standard input.
 
 Exits with a status of
 .B 0
@@ -48,9 +47,10 @@ script resumes after ^D (end of file).
 .IP "--shell=\fIpath\fR" 5
 Instead of /bin/sh, use the specified shell. Note that results may vary
 as many shells will not understand all the internal commands used.
-.IP "--color={never|always|auto}" 5
+.IP "--color[={never|always|auto}]" 5
 Colorize the output never at all, always, or only when writing to a
-terminal (auto).
+terminal (auto). When the argument to --color is omitted, it defaults to
+always.  When the --color option is not used, --color=auto is assumed. 
 .IP "--no-stderr" 5
 Do not redirect standard error of the shell. This allows to process error
 messages out-of-band. By default, no difference is made between standard
@@ -164,12 +164,10 @@ To synchronize the command stream with the output, an internal 'echo\ ^D'
 command is appended to each command. This mechanism usually remains
 hidden, but unterminated commands may lead to a loss of this
 synchronization, which may cause test cases to fail in unexpected ways.
-Likewise, internal commands are needed for implementing standard input
-redirection.
 
-The file descriptors 109, 110, and 111 are used internally, and must not
-be used otherwise. This is an arbitrary assignment; any file descriptor
-numbers could have been chosen.
+File descriptor 109 is used internally, and must not be used otherwise.
+This is an arbitrary assignment; any file descriptor numbers could have
+been chosen.
 
 .SH BUGS
 
