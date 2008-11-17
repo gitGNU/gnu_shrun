@@ -1,7 +1,7 @@
 $ echo foo
 > foo
 
-$ sh
+$ sh /dev/stdin
 
 	$ echo bar
 	> bar

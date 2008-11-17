@@ -1,4 +1,4 @@
-$ shrun
+$ shrun --color=never
 < $ exit 1
 > [1] $ exit 1 -- short result
 > 1 commands (0 passed, 1 failed)

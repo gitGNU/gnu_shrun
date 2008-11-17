@@ -1,4 +1,4 @@
-$ shrun
+$ shrun --color=never
 < $ cat
 < <
 < < a

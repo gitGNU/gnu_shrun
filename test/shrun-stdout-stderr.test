@@ -1,4 +1,4 @@
-$ shrun
+$ shrun --color=never
 < $ echo stdout
 < > stdout
 < $ echo stderr >&2
@@ -7,7 +7,7 @@ $ shrun
 > [3] $ echo stderr >&2 -- ok
 > 2 commands (2 passed, 0 failed)
 
-$ shrun --no-stderr 2> /dev/null
+$ shrun --color=never --no-stderr 2> /dev/null
 < $ echo stdout
 < > stdout
 < $ echo stderr >&2
@@ -15,7 +15,7 @@ $ shrun --no-stderr 2> /dev/null
 > [3] $ echo stderr >&2 -- ok
 > 2 commands (2 passed, 0 failed)
 
-$ shrun --no-stderr > /dev/null
+$ shrun --color=never --no-stderr > /dev/null
 < $ echo stdout
 < > stdout
 < $ echo stderr >&2

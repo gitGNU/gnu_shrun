@@ -1,13 +1,13 @@
 In this test, at the time when the next stdin redirection occurs,
 the previous process still has the read side of the old pipe open.
 
-$ shrun
+$ shrun --color=never
 < $ timeout 1
 < $ kill -STOP $$
 > [1] $ timeout 1 -- ok
 > [2] $ kill -STOP $$ -- command timed out
 
-$ shrun
+$ shrun --color=never
 < $ timeout 1
 < $ sleep 2
 > [1] $ timeout 1 -- ok

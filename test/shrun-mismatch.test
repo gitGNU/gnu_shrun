@@ -1,4 +1,4 @@
-$ shrun
+$ shrun --color=never
 < $ echo foo
 < > foo
 < $ echo bar

@@ -29,11 +29,13 @@
 #include <unistd.h>
 #include <string.h>
 #include <libgen.h>
+#include <termios.h>
 
 #define _GNU_SOURCE
 #include <getopt.h>
 
 #include "queue.h"
+#include "pty_fork.h"
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
@@ -46,22 +48,19 @@
 
 enum { PIPE_READ, PIPE_WRITE };
 
-const char *ansi_red = "\033[31m\033[1m";
-const char *ansi_green = "\033[32m";
-const char *ansi_clear = "\033[m";
+static const char *ansi_red = "\033[31m\033[1m";
+static const char *ansi_green = "\033[32m";
+static const char *ansi_clear = "\033[m";
 
-const char *end_marker_cmd = "echo $'\\4'\n";
-const char *restore_stdin_cmd = "exec <&111-\n";
-const char *control_cmds = "timeout() { echo \"timeout $1\" >&109; }\n";
+static const char *control_cmds = "timeout() { echo \"timeout $1\" >&109; }\n";
 
-const char *progname;
-char *tempdir_name, *stdin_fifo_name;
+static const char *progname;
 
-const char *opt_shell = "/bin/sh";
-unsigned int opt_timeout = 5;
-unsigned int opt_stop_at = (unsigned int)-1;
-int opt_stderr = 1;
-int opt_color = -1;
+static const char *opt_shell = "/bin/sh";
+static unsigned int opt_timeout = 5;
+static unsigned int opt_stop_at = (unsigned int)-1;
+static int opt_stderr = 1;
+static int opt_color = -1;
 
 static int append_line(struct queue *queue, const char *line, size_t sz)
 {
@@ -88,7 +87,7 @@ static int append_line(struct queue *queue, const char *line, size_t sz)
 	return 0;
 }
 
-size_t first_lineno = 1;
+static size_t first_lineno = 1;
 
 static int read_testcase(struct queue *script, int eof, struct queue *testcase,
 			 struct queue *expected, struct queue *input,
@@ -149,71 +148,6 @@ static int read_testcase(struct queue *script, int eof, struct queue *testcase,
 
 done:
 	return eof;
-}
-
-static int create_stdin_fifo(void) {
-	if (!stdin_fifo_name) {
-		const char *tmpdir;
-		size_t len;
-
-		tmpdir = getenv("TMPDIR");
-		if (!tmpdir)
-			tmpdir = "/tmp";
-		len = strlen(tmpdir) + 1 + strlen(progname) + 8;
-		tempdir_name = malloc(len);
-		stdin_fifo_name = malloc(len + 6);
-		if (!tempdir_name || !stdin_fifo_name) {
-			perror(progname);
-			return -1;
-		}
-		sprintf(tempdir_name, "%s/%s.XXXXXX", tmpdir, progname);
-		if (!mkdtemp(tempdir_name)) {
-			fprintf(stderr, "%s: %s: %s\n",
-				progname, tempdir_name, strerror(errno));
-			return -1;
-		}
-		sprintf(stdin_fifo_name, "%s/stdin", tempdir_name);
-	} else {
-		/*
-		 * It is not guaranteed that the read side of the pipe
-		 * has been closed already (e.g., a timeout may have
-		 * occurred, or the process may have forked). If still
-		 * open, we would reopen the pipe to that old process,
-		 * and lose synchronization with the new process in
-		 * redirect_stdin(). To avoid this, unlink and recreate
-		 * the pipe here.
-		 */
-		unlink(stdin_fifo_name);
-	}
-	if (mkfifo(stdin_fifo_name, 0700) != 0) {
-		fprintf(stderr, "%s: %s: %s\n",
-			progname, stdin_fifo_name, strerror(errno));
-		return -1;
-	}
-	return 0;
-}
-
-static int redirect_stdin(int out)
-{
-	static const char *redirect_stdin_fmt = "exec 111<&0- <%s\n";
-	char *redirect_stdin;
-	size_t sz;
-	int ret = 0;
-
-	if (create_stdin_fifo() != 0)
-		return -1;
-	redirect_stdin = malloc(strlen(redirect_stdin_fmt) +
-				strlen(stdin_fifo_name));
-	if (!redirect_stdin)
-		return -1;
-	sz = sprintf(redirect_stdin, redirect_stdin_fmt, stdin_fifo_name);
-
-	if (write(out, redirect_stdin, sz) != sz)
-		ret = -1;
-	free(redirect_stdin);
-	if (ret != -1)
-		ret = open(stdin_fifo_name, O_WRONLY);
-	return ret;
 }
 
 static void report_begin(struct queue *testcase, size_t preamble)
@@ -328,6 +262,21 @@ static int report_end(struct queue *fifo1, struct queue *fifo2,
 	return 1;
 }
 
+static const char *end_marker_cmd = "echo $'\\4'\n";
+
+static int erase_end_marker(struct queue *output)
+{
+	char *buf;
+	ssize_t sz;
+
+	buf = queue_read_pos(output, &sz);
+	if (buf && sz >= 2 && buf[sz - 2] == '\4' && buf[sz - 1] == '\n') {
+		queue_erase_tail(output, 2);
+		return 0;
+	}
+	return -1;
+}
+
 int interrupted;
 void catch_interrupted(int signal)
 {
@@ -425,12 +374,8 @@ static int interactive(int in, int out)
 				break;
 			queue_advance_write(&output, sz);
 
-			buf = queue_read_pos(&output, &sz);
-			if (buf && sz >= 2 && buf[sz - 2] == '\4' &&
-			    buf[sz - 1] == '\n') {
+			if (erase_end_marker(&output) == 0)
 				interactive_eof = 1;
-				queue_erase_tail(&output, 2);
-			}
 			for(;;) {
 
 				buf = queue_read_pos(&output, &sz);
@@ -459,8 +404,28 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 	int script_eof = 0, in_eof = 0, testcase_eof = 0;
 	int reading_testcase = 1, retval = 0;
 	size_t passed = 0, failed = 0, timed_out = 0, preamble = 0;
-	int stdin_fd = -1;
+	struct termios term;
 	sigset_t sigset;
+
+	if (isatty(out)) {
+		if (tcgetattr(out, &term) < 0) {
+			fprintf(stderr, "%s%s: %s%s\n", ansi_red, progname,
+				strerror(errno), ansi_clear);
+			return 1;
+		}
+		
+		/* Turn off terminal echo. */
+		term.c_lflag &= ~(ECHO | ECHOE | ECHOK | ECHONL);
+		
+		/* Turn off '\n' to '\r\n' translation. */
+		term.c_oflag &= ~(ONLCR);
+
+		if (tcsetattr(out, TCSANOW, &term) < 0) {
+			fprintf(stderr, "%s%s: %s%s\n", ansi_red, progname,
+				strerror(errno), ansi_clear);
+			return 1;
+		}
+	}
 
 	sigemptyset(&sigset);
 	sigaddset(&sigset, SIGHUP);
@@ -469,7 +434,6 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 	sigprocmask(SIG_BLOCK, &sigset, NULL);
 	sigemptyset(&sigset);
 
-	signal(SIGHUP, catch_interrupted);
 	signal(SIGINT, catch_interrupted);
 	signal(SIGCHLD, SIG_IGN /*catch_child_died*/);
 	signal(SIGPIPE, SIG_IGN);
@@ -498,10 +462,6 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 			queue_reset(&expected);
 			queue_reset(&input);
 			queue_reset(&output);
-			if (stdin_fd != -1) {
-				close(stdin_fd);
-				stdin_fd = -1;
-			}
 			reading_testcase = 1;
 			preamble = 0;
 		}
@@ -518,12 +478,18 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 				report_begin(&testcase, preamble);
 
 				if (!queue_empty(&input)) {
-					stdin_fd = redirect_stdin(out);
-					if (stdin_fd == -1)
+					char *buf1, *buf2;
+					ssize_t sz;
+
+					buf1 = queue_read_pos(&input, &sz);
+					buf2 = queue_write_pos(&testcase,
+							       sz + 1, NULL);
+					if (!buf2)
 						break;
-					if (queue_append(&testcase,
-							restore_stdin_cmd) != 0)
-						break;
+					memcpy(buf2, buf1, sz);
+					buf2[sz] = term.c_cc[VEOF];
+					queue_advance_read(&input, sz);
+					queue_advance_write(&testcase, sz + 1);
 				}
 				if (queue_append(&testcase,
 						 end_marker_cmd) != 0)
@@ -555,9 +521,9 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 				FD_SET(out, &wfds);
 				maxfd = max(maxfd, out + 1);
 			}
-			if (stdin_fd != -1) {
-				FD_SET(stdin_fd, &wfds);
-				maxfd = max(maxfd, stdin_fd + 1);
+			if (!queue_empty(&input)) {
+				FD_SET(out, &wfds);
+				maxfd = max(maxfd, out + 1);
 			}
 
 			if (opt_timeout) {
@@ -596,22 +562,17 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 			if (sz == 0)
 				script_eof = 1;
 		}
-		if ((stdin_fd != -1 && FD_ISSET(stdin_fd, &wfds)) ||
-		    (!reading_testcase && in_eof)) {
+		if (FD_ISSET(out, &wfds)) {
 			char *buf;
 			ssize_t sz;
 
 			buf = queue_read_pos(&input, &sz);
 			if (!in_eof) {
-				sz = write(stdin_fd, buf, sz);
+				sz = write(out, buf, sz);
 				if (sz < 0)
 					break;
 			}
 			queue_advance_read(&input, sz);
-			if (queue_empty(&input)) {
-				close(stdin_fd);
-				stdin_fd = -1;
-			}
 		}
 		if (FD_ISSET(out, &wfds) || (!reading_testcase && in_eof)) {
 			char *buf;
@@ -638,15 +599,9 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 			else if (sz < 0)
 				break;
 			else {
-				char *buf;
-
 				queue_advance_write(&output, sz);
-				buf = queue_read_pos(&output, &sz);
-				if (buf && sz >= 2 && buf[sz - 2] == '\4'
-				    && buf[sz - 1] == '\n') {
+				if (erase_end_marker(&output) == 0)
 					testcase_eof = 1;
-					queue_erase_tail(&output, 2);
-				}
 			}
 		}
 		if (control_fd != -1 && FD_ISSET(control_fd, &rfds)) {
@@ -688,15 +643,6 @@ out:
 	queue_destroy(&expected);
 	queue_destroy(&input);
 	queue_destroy(&output);
-
-	if (stdin_fifo_name) {
-		unlink(stdin_fifo_name);
-		free(stdin_fifo_name);
-	}
-	if (tempdir_name) {
-		rmdir(tempdir_name);
-		free(tempdir_name);
-	}
 
 	failed++;
 	if (timed_out)
@@ -740,7 +686,7 @@ struct option long_options[] = {
 
 int main(int argc, char *argv[])
 {
-	int pipe0[2], pipe1[2], control[2];
+	int ptm, output[2], control[2];
 	int retval = 0;
 	int script_fd = STDIN_FILENO;
 	int c;
@@ -806,53 +752,41 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (pipe(pipe0) != 0 || pipe(pipe1) != 0 || pipe(control)) {
+	if (pipe(output) != 0 || pipe(control) != 0) {
 		perror(progname);
 		return 1;
 	}
 
-	child_pid = fork();
+	child_pid = pty_fork(&ptm);
 	if (child_pid < 0) {
 		perror(progname);
 		return 1;
 	}
 
-	/*
-	 * parent ---pipe0--> shell ---pipe1
-	 *    ^                          |
-	 *    '--------------------------'
-	 */
-
 	if (child_pid == 0) {
-		close(pipe0[PIPE_WRITE]);
-		close(pipe1[PIPE_READ]);
-		close(control[PIPE_READ]);
-
-		dup2(pipe0[PIPE_READ], 110);
-		close(pipe0[PIPE_READ]);
-		if (script_fd == STDIN_FILENO) {
-			close(STDIN_FILENO);
-			open("/dev/null", O_RDONLY);
+		close(output[PIPE_READ]);
+		if (output[PIPE_WRITE] != STDOUT_FILENO) {
+			dup2(output[PIPE_WRITE], STDOUT_FILENO);
+			close(output[PIPE_WRITE]);
 		}
-		dup2(pipe1[PIPE_WRITE], STDOUT_FILENO);
-		close(pipe1[PIPE_WRITE]);
-		dup2(control[PIPE_WRITE], 109);
-		close(control[PIPE_WRITE]);
+		close(control[PIPE_READ]);
+		if (control[PIPE_WRITE] != 109) {
+			dup2(control[PIPE_WRITE], 109);
+			close(control[PIPE_WRITE]);
+		}
 		if (opt_stderr)
 			dup2(STDOUT_FILENO, STDERR_FILENO);
 
-		execl(opt_shell, opt_shell, "/dev/fd/110", NULL);
+		execl(opt_shell, opt_shell, NULL);
 		fprintf(stderr, "%s%s: %s: %s%s\n",
 			ansi_red, progname, opt_shell, strerror(errno),
 			ansi_clear);
 		return 1;
 	} else {
-		close(pipe0[PIPE_READ]);
-		close(pipe1[PIPE_WRITE]);
+		close(output[PIPE_WRITE]);
 		close(control[PIPE_WRITE]);
 
-		if (shrun(script_fd, pipe1[PIPE_READ], pipe0[PIPE_WRITE],
-			  control[PIPE_READ]) != 0)
+		if (shrun(script_fd, output[PIPE_READ], ptm, control[PIPE_READ]) != 0)
 			retval = 1;
 	}
 	return retval;
