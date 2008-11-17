@@ -1,4 +1,4 @@
-VERSION := 0.9.1
+VERSION := 0.9.2
 RELEASE := $(shell date +%Y%m%d)
 CFLAGS := -g -Wall
 
@@ -15,7 +15,7 @@ TESTS += $(ROOT_TESTS)
 endif
 
 SOURCES := Makefile queue.[ch] pty_fork.[ch] shrun.c shrun.1 TODO COPYING \
-	   $(ALL_TESTS)
+	   shrun.spec.in .gitignore test/.gitignore $(ALL_TESTS)
 
 all: shrun
 
