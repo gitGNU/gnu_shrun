@@ -47,8 +47,8 @@ dist:
  
 rpm: dist
 	@sed -e 's:@VERSION@:$(VERSION):g' \
-	    -e 's:@RELEASE@:$(RELEASE):g' \
-	    shrun.spec.in > shrun.spec
+	     -e 's:@RELEASE@:$(RELEASE):g' \
+	     shrun.spec.in > shrun.spec
 	@rm -rf rpmbuild
 	@mkdir -p rpmbuild rpm/src
 	rpmbuild --eval '%define _sourcedir $(CURDIR)' \
