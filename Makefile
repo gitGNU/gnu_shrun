@@ -40,10 +40,10 @@ uninstall:
 	rm -f $(BUILD_ROOT)$(mandir)/man1/shrun.1
 
 dist:
-	ln -s . shrun-$(VERSION)
+	@ln -s . shrun-$(VERSION)
 	tar czf shrun-$(VERSION).tar.gz \
 		$(patsubst %,shrun-$(VERSION)/%,$(SOURCES))
-	rm shrun-$(VERSION)
+	@rm shrun-$(VERSION)
  
 rpm: dist
 	@sed -e 's:@VERSION@:$(VERSION):g' \
@@ -64,4 +64,4 @@ clean:
 	rm -f queue.o pty_fork.o shrun.o shrun $(ALL_TESTS:.test=.ok) shrun.spec
 	rm -rf rpmbuild
 
-.PHONY: all check dist rpm clean
+.PHONY: all check install uninstall dist rpm clean
