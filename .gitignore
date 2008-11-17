@@ -1,3 +1,7 @@
 shrun
 *.o
 shrun-*.tar.gz
+
+rpmbuild
+shrun.spec
+rpm

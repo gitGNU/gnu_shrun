@@ -1,0 +1,42 @@
+Summary: Shell Runner - A Testing Tool
+Name: shrun
+Version: @VERSION@
+Release: @RELEASE@
+License: GPL
+Packager: Silicon Graphics, Inc. <http://www.sgi.com/>
+Vendor: SUSE LINUX Products GmbH, Nuernberg, Germany
+Group: System/Base
+Source: shrun-%version.tar.gz
+URL: http://www.sgi.com/
+BuildRoot: %{_tmppath}/%{name}-root
+
+%description
+Simple test driver program for running shell commands with known
+arguments and inputs and checking their outputs.
+
+%prep
+%setup
+
+%build
+# shrun doesn't have automake et al yet
+make
+make check
+
+%install
+# shrun makefile doesn't have an install: yet
+make install bindir=%_bindir mandir=%_mandir BUILD_ROOT=$RPM_BUILD_ROOT
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root)
+%{_bindir}/*
+%{_mandir}/man1/*
+#%doc COPYING TODO
+
+%changelog
+* Mon Nov 17 2008 - agruen@suse.de
+- Integrate spec file into project.
+* Wed Nov 12 2008 - gnb@sgi.com
+- Initial packaging.
