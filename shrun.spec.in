@@ -23,8 +23,7 @@ make
 make check
 
 %install
-# shrun makefile doesn't have an install: yet
-make install bindir=%_bindir mandir=%_mandir BUILD_ROOT=$RPM_BUILD_ROOT
+make install bindir=%_bindir mandir=%_mandir DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -36,6 +35,8 @@ rm -rf $RPM_BUILD_ROOT
 #%doc COPYING TODO
 
 %changelog
+* Tue Nov 18 2008 - gnb@sgi.com
+- Makefile uses automake-style DESTDIR
 * Mon Nov 17 2008 - agruen@suse.de
 - Integrate spec file into project.
 * Wed Nov 12 2008 - gnb@sgi.com

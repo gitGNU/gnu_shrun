@@ -30,14 +30,14 @@ shrun: shrun.o queue.o pty_fork.o
 check: $(TESTS:.test=.ok)
 
 install:
-	install -d $(BUILD_ROOT)$(bindir)
-	install -m 755 -s shrun $(BUILD_ROOT)$(bindir)
-	install -d $(BUILD_ROOT)$(mandir)/man1
-	install -m 644 shrun.1 $(BUILD_ROOT)$(mandir)/man1
+	install -d $(DESTDIR)$(bindir)
+	install -m 755 -s shrun $(DESTDIR)$(bindir)
+	install -d $(DESTDIR)$(mandir)/man1
+	install -m 644 shrun.1 $(DESTDIR)$(mandir)/man1
 
 uninstall:
-	rm -f $(BUILD_ROOT)$(bindir)/shrun
-	rm -f $(BUILD_ROOT)$(mandir)/man1/shrun.1
+	rm -f $(DESTDIR)$(bindir)/shrun
+	rm -f $(DESTDIR)$(mandir)/man1/shrun.1
 
 dist:
 	@ln -s . shrun-$(VERSION)
