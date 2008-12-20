@@ -14,8 +14,7 @@
   Library General Public License for more details.
 
   You should have received a copy of the GNU Library General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+  License along with this program. If not, see http://www.gnu.org/licenses/.
 */
 
 #include <sys/types.h>
@@ -168,15 +167,15 @@ static void report_begin(struct queue *testcase, size_t preamble)
 	fflush(stdout);
 }
 
-static int report_end(struct queue *fifo1, struct queue *fifo2,
+static int report_end(struct queue *queue1, struct queue *queue2,
 		      int testcase_eof)
 {
 	int width = 0;
 	char *buf1, *buf2, *l1, *l2, *eol1, *eol2;
 	ssize_t sz1, sz2, lz1, lz2;
 
-	buf1 = queue_read_pos(fifo1, &sz1);
-	buf2 = queue_read_pos(fifo2, &sz2);
+	buf1 = queue_read_pos(queue1, &sz1);
+	buf2 = queue_read_pos(queue2, &sz2);
 	if (!buf1)
 		sz1 = 0;
 	if (!buf2)
