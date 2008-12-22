@@ -667,7 +667,7 @@ out:
 void usage(int status)
 {
 	fprintf(status ? stderr : stdout,
-		"usage: %s [--timeout n] [--stop-at n] [--shell path]"
+		"usage: %s [--timeout n] [--stop-at n] [--shell path] "
 		"[--color[={never|always|auto}]] [--no-stderr]\n",
 		progname);
 	exit(status);
