@@ -1,3 +1,11 @@
+* Figure out a way to make stdin, reading from /dev/tty, and su work
+  as well as possible.
+* Get rid of special open file descriptors in favor of named pipes.
 * When the child dies, continue reading from the shell to make sure we
   get all error messages and the like. This will also ensure that we
   properly report exec failures.
+
+* Variable expansion in the output?
+* Regular expression comparisons in the output?
+* Implement a verbose mode that shows all the output of successful
+  commands.

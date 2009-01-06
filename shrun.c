@@ -38,13 +38,6 @@
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
-/* TODO:
- * - var expansion in the output?
- * - regexp comparison?
- * - implement a verbose mode that shows all the output of successful
- *   commands as well.
- */
-
 enum { PIPE_READ, PIPE_WRITE };
 
 static const char *ansi_red = "\033[31m\033[1m";
