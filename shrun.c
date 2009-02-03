@@ -155,7 +155,7 @@ static void report_begin(struct queue *testcase, size_t preamble)
 		newline = buf + sz -1;
 
 	printf("[%u] $ %.*s%s -- ",
-	       first_lineno, newline - buf, buf,
+	       (unsigned int)first_lineno, (int)(newline - buf), buf,
 	       (newline == buf + sz - 1) ? "" : "...");
 	fflush(stdout);
 }
@@ -244,9 +244,9 @@ static int report_end(struct queue *queue1, struct queue *queue2,
 		}
 
 		printf("%s%-*.*s%s %c %s%.*s%s\n",
-		       eq ? "" : ansi_red, width, lz1, l1, ansi_clear,
+		       eq ? "" : ansi_red, width, (int)lz1, l1, ansi_clear,
 		       eq ? '|' : '?',
-		       eq ? "" : ansi_green, lz2, l2, ansi_clear);
+		       eq ? "" : ansi_green, (int)lz2, l2, ansi_clear);
 
 		sz1 -= eol1 - l1; l1 = eol1;
 		sz2 -= eol2 - l2; l2 = eol2;
@@ -648,7 +648,8 @@ out:
 		if (passed + failed > 0)
 			printf("%s%u commands (%u passed, %u failed)\%s\n",
 			       (failed == 0) ? ansi_green : ansi_red,
-			       passed + failed, passed, failed, ansi_clear);
+			       (int)(passed + failed),
+			       (int)passed, (int)failed, ansi_clear);
 	} else
 		printf("%s%s%s\n", ansi_red, strerror(errno), ansi_clear);
 
