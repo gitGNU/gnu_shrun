@@ -9,6 +9,3 @@
 * Regular expression comparisons in the output?
 * Implement a verbose mode that shows all the output of successful
   commands.
-
-* Add a mode in which all the outputs of commands are filled in instead
-  of compared. This will make writing / updating test cases much easier!

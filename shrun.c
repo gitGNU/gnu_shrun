@@ -29,6 +29,7 @@
 #include <string.h>
 #include <libgen.h>
 #include <termios.h>
+#include <limits.h>
 
 #define _GNU_SOURCE
 #include <getopt.h>
@@ -53,6 +54,9 @@ static unsigned int opt_timeout = 5;
 static unsigned int opt_stop_at = (unsigned int)-1;
 static int opt_stderr = 1;
 static int opt_color = -1;
+
+static FILE *ufp = NULL;
+static char *testcase_indent = NULL;
 
 static int append_line(struct queue *queue, const char *line, size_t sz)
 {
@@ -104,21 +108,35 @@ static int read_testcase(struct queue *script, int eof, struct queue *testcase,
 		l = buf; end = buf + sz;
 		while (l < end && (*l == ' ' || *l == '\t'))
 			l++;
-		if (l < end && (*l == '$' ||
-				queue_length(testcase) > preamble)) {
-			switch(*l) {
-			case '$': case '+':
-				if (*l == '$' &&
-				    queue_length(testcase) > preamble) {
-					eof = 1;
-					goto done;
+		if (l == end || *l == '$' || *l == '\n') {
+			if (queue_length(testcase) > preamble) {
+				eof = 1;
+				goto done;
+			}
+			if (l < end && *l == '$') {
+				if (l == buf) {
+					free(testcase_indent);
+					testcase_indent = NULL;
+				} else {
+					testcase_indent =
+						realloc(testcase_indent,
+							l - buf + 1);
+					if (!testcase_indent)
+						return -1;
+					memcpy(testcase_indent, buf,
+					       l - buf);
+					testcase_indent[l - buf] = '\0';
 				}
 
-				if (*l == '$') {
-					first_lineno = lineno;
-					if (opt_stop_at <= first_lineno)
-						return 0;
-				}
+				first_lineno = lineno;
+				if (opt_stop_at <= first_lineno)
+					return 0;
+				if (append_line(testcase, l, end - l) != 0)
+					return -1;
+			}
+		} else if (queue_length(testcase) > preamble) {
+			switch(*l) {
+			case '+':
 				if (append_line(testcase, l, end - l) != 0)
 					return -1;
 				break;
@@ -133,6 +151,9 @@ static int read_testcase(struct queue *script, int eof, struct queue *testcase,
 					return -1;
 				break;
 			}
+		}
+		if (ufp && l < end && *l != '>') {
+			fwrite(buf, 1, sz, ufp);
 		}
 		queue_advance_read(script, sz);
 		lineno++;
@@ -395,7 +416,8 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 	struct queue script, control, testcase, expected, input, output;
 	int script_eof = 0, in_eof = 0, testcase_eof = 0;
 	int reading_testcase = 1, retval = 0;
-	size_t passed = 0, failed = 0, timed_out = 0, preamble = 0;
+	int passed = 0, failed = 0, timed_out = 0;
+	size_t preamble = 0;
 	struct termios term;
 	sigset_t sigset;
 
@@ -415,7 +437,7 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 		if (tcsetattr(out, TCSANOW, &term) < 0) {
 			fprintf(stderr, "%s%s: %s%s\n", ansi_red, progname,
 				strerror(errno), ansi_clear);
-			return 1;
+			return -1;
 		}
 	}
 
@@ -451,6 +473,28 @@ static int shrun(int script_fd, int in, int out, int control_fd)
 				passed++;
 			else
 				failed++;
+			if (ufp) {
+				char *buf, *l;
+				ssize_t sz;
+
+				buf = queue_read_pos(&output, &sz);
+				while (sz) {
+					size_t lsz;
+
+					l = memchr(buf, '\n', sz);
+					if (l)
+						lsz = l - buf + 1;
+					else
+						lsz = sz;
+					if (testcase_indent)
+						fputs(testcase_indent, ufp);
+					fprintf(ufp, "> %.*s", (int)lsz, buf);
+					if (!l)
+						fputs("\n", ufp);
+					buf += lsz;
+					sz -= lsz;
+				}
+			}
 			queue_reset(&expected);
 			queue_reset(&input);
 			queue_reset(&output);
@@ -654,7 +698,7 @@ out:
 		printf("%s%s%s\n", ansi_red, strerror(errno), ansi_clear);
 
 	if (failed && !retval)
-		retval = 1;
+		retval = failed;
 	return retval;
 }
 
@@ -669,10 +713,12 @@ void usage(int status)
 
 struct option long_options[] = {
 	{"timeout", 1, NULL, 't'},
-	{"stop-at", 1, NULL, 1},
-	{"shell", 1, NULL, 2},
-	{"color", 2, NULL, 3},
-	{"no-stderr", 0, NULL, 4},
+	{"update", 0, NULL, 'u'},
+	{"update-all", 0, NULL, 'U'},
+	{"stop-at", 1, NULL, CHAR_MAX + 1},
+	{"shell", 1, NULL, CHAR_MAX + 2},
+	{"color", 2, NULL, CHAR_MAX + 3},
+	{"no-stderr", 0, NULL, CHAR_MAX + 4},
 	{"help", 0, NULL, 'h'},
 	{NULL, 0, NULL, 0}
 };
@@ -681,25 +727,37 @@ int main(int argc, char *argv[])
 {
 	int ptm, output[2], control[2];
 	int retval = 0;
+	char *script = NULL;
 	int script_fd = STDIN_FILENO;
+	int update_one = 0, update_all = 0;
+	char *tmpfile = NULL;
 	int c;
 
 	progname = basename(argv[0]);
-	while ((c = getopt_long(argc, argv, "t:h", long_options, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "t:uUh",
+				long_options, NULL)) != -1) {
 		switch(c) {
 		case 't':
 			opt_timeout = atoi(optarg);
 			break;
 
-		case 1:  /* --stop-at */
+		case 'u':  /* --update */
+			update_one = 1;
+			break;
+
+		case 'U':  /*  --update-all */
+			update_all = 1;
+			break;
+
+		case CHAR_MAX + 1:  /* --stop-at */
 			opt_stop_at = atoi(optarg);
 			break;
 
-		case 2:  /*  --shell */
+		case CHAR_MAX + 2:  /*  --shell */
 			opt_shell = optarg;
 			break;
 
-		case 3:  /* --color */
+		case CHAR_MAX + 3:  /* --color */
 			if (optarg == NULL || strcmp(optarg, "always") == 0)
 				opt_color = 1;
 			else if (strcmp(optarg, "never") == 0)
@@ -710,7 +768,7 @@ int main(int argc, char *argv[])
 				usage(1);
 			break;
 
-		case 4:  /* --no-stderr */
+		case CHAR_MAX + 4:  /* --no-stderr */
 			opt_stderr = 0;
 			break;
 
@@ -726,12 +784,35 @@ int main(int argc, char *argv[])
 	if (optind + 1 < argc)
 		usage(1);
 	if (optind < argc) {
-		script_fd = open(argv[optind], O_RDONLY);
+		script = argv[optind];
+		script_fd = open(script, O_RDONLY);
 		if (script_fd < 0) {
 			fprintf(stderr, "%s: %s: %s\n",
 			        progname, argv[optind], strerror(errno));
 			return 1;
 		}
+	}
+	if (update_one || update_all) {
+		int ufd;
+
+		if (!script) {
+			fprintf(stderr, "%s: update requires a script "
+				"filename\n", progname);
+			return 1;
+		}
+		tmpfile = malloc(strlen(script) + 8);
+		if (!tmpfile)
+			goto fail_unlink;
+		sprintf(tmpfile, "%s.XXXXXX", script);
+		ufd = mkstemp(tmpfile);
+		if (ufd == -1) {
+			fprintf(stderr, "%s: %s: %s\n",
+			        progname, tmpfile, strerror(errno));
+			return 2;
+		}
+		ufp = fdopen(ufd, "w");
+		if (!ufp)
+			goto fail_unlink;
 	}
 	if (script_fd == STDIN_FILENO)
 		opt_stop_at = (unsigned int)-1;
@@ -779,8 +860,52 @@ int main(int argc, char *argv[])
 		close(output[PIPE_WRITE]);
 		close(control[PIPE_WRITE]);
 
-		if (shrun(script_fd, output[PIPE_READ], ptm, control[PIPE_READ]) != 0)
-			retval = 1;
+		retval = shrun(script_fd, output[PIPE_READ], ptm,
+			       control[PIPE_READ]);
+		if (retval >= 0) {
+			if ((update_one || update_all) && retval != 0) {
+				struct stat st;
+				char *backup;
+
+				if (ferror(ufp)) {
+					errno = EIO;
+					goto fail_unlink;
+				}
+				if (fclose(ufp))
+					goto fail_unlink;
+				if (update_one && retval > 1) {
+					fprintf(stderr, "%snot updating %s "
+						"(too many changes)%s\n",
+						ansi_red, script, ansi_clear);
+					retval = 2;
+					goto out;
+				}
+				backup = malloc(strlen(script) + 2);
+				if (!backup)
+					goto fail_unlink;
+				sprintf(backup, "%s~", script);
+				if (stat(script, &st) ||
+				    chmod(tmpfile, st.st_mode) ||
+				    rename(script, backup) ||
+				    rename(tmpfile, script))
+					goto fail_unlink;
+				printf("%s%s updated%s\n",
+				       ansi_green, script, ansi_clear);
+				tmpfile = NULL;
+			}
+			if (retval != 0)
+				retval = 1;
+		}
 	}
+
+out:
+	if (tmpfile)
+		unlink(tmpfile);
 	return retval;
+
+fail_unlink:
+	fprintf(stderr, "%s: %s\n", progname, strerror(errno));
+	retval = 2;
+	goto out;
+
 }
